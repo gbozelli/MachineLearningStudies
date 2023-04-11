@@ -1,4 +1,5 @@
 import numpy as np
+import numpy.matlib as mt
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
@@ -11,16 +12,13 @@ def graphic(x,X,Y):
     return None
 
 def Regression(X,Y,order):
-    A = createMatrix(order,order)
-    B = []
-    for i in range(0,order+1):
-        B.append(0)
-    A = valuesMatrix(A, X)
-    B = valuesVector(B, Y)
-    print(A)
-    print(B)
-    x = np.linalg.solve(A,B)
-    return x
+    D, r = createMatrix(len(X),order+1), createMatrix(len(Y),0)
+    D = valuesMatrixD(D,X)
+    r = valuesD(r,Y)
+    print("Here")
+    w = mt.multiply(mt.multiply(mt.invert(mt.multiply(D,mt.transpose(D))),mt.transpose(D)),r)
+    print(r)
+    return w
 
 def createMatrix(m,n):
     Matrix = []
@@ -31,6 +29,10 @@ def createMatrix(m,n):
         for j in range(0,n+1):
             Element.append(0)
     return Matrix
+
+def valuesD(List, Sample):
+    for i in range(0,len(Sample)):
+        List.append(Sample[i])
 
 def valuesMatrix(Matrix,Sample):
     m = len(Matrix)
@@ -43,6 +45,16 @@ def valuesMatrix(Matrix,Sample):
     Matrix[0][0] = Size
     return Matrix
 
+def valuesMatrixD(Matrix,Sample):
+    m = len(Matrix)
+    n = len(Matrix[0])
+    Size = len(Sample)
+    for i in range(0,m):
+        for j in range(0,n):
+            for k in range(0,Size):
+                Matrix[i][j] = Sample[k]**(i*k)
+    return Matrix
+
 def valuesVector(Matrix,Sample):
     m = len(Matrix)
     Size = len(Sample)
@@ -51,9 +63,4 @@ def valuesVector(Matrix,Sample):
             Matrix[i] += Sample[k]**(i)
     return Matrix
 
-Y = [11,19,29,31,40.5,50]
-X = [1,2,3,3,4,5]
-x = Regression(X,Y,1)
-print(x)
-graphic(x,X,Y)
 
