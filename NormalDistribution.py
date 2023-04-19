@@ -12,6 +12,12 @@ def summation(X):
         sum += X[i]
     return sum
 
+def summationSquared(X):
+    sum = 0
+    for i in range(0,len(X)):
+        sum += X[i]**2
+    return sum
+
 def meanof(X):
     mean = summation(X)/len(X)
     return mean
@@ -26,23 +32,40 @@ def deviationof(X):
 
 def varianceof(X):
     variance = 0
-    mean = mean(X)
+    mean = meanof(X)
     for i in range(0,len(X)):
         variance += (X[i] - mean)**2
     variance = np.sqrt(deviationof(X))
     return variance
 
-def selectElements(X,mean,deviation):
-    X.append(np.random.randint(0,mean))
-    X.append(np.random.randint(mean,mean*2))
+def test(X,u,d):
     meanTest = meanof(X)
     DeviationTest = deviationof(X)
-    if meanTest == mean and DeviationTest == deviation:
+    if meanTest == u and DeviationTest == d:
         return None 
     else:
         X.remove(X[-1])
         X.remove(X[-2])
-        return None
+    return None
+
+def avaliateNum(X,mean,deviation):
+    u, d = mean, deviation
+    k = len(X)
+    SumX = summation(X)
+    SumX2 = summationSquared(X)
+    x = ((u*d**2)-(SumX2)+2*u*(SumX)-u**2)/((k*u)-SumX)-1
+    return x
+
+def selectElements(X,mean,deviation):
+    u, d = mean, deviation
+    k = len(X)
+    X.append(np.random.randint(0,mean))
+    if(k*u!=summation(X)):
+        X.append(avaliateNum(X,mean,deviation))
+        test(X,u,d)
+    else:
+        selectElements(X,u,d)
+    return None
 
 def generateSample(mean, deviation, N):
     X = []
@@ -56,7 +79,7 @@ def generateDistribution(X):
     deviation = deviationof(X)
     return [mean,deviation]
 
-X = generateSample(4,2,2)
+X = generateSample(4,2,6)
 Y = []
 Y.append(generateDistribution(X))
 print(X)
